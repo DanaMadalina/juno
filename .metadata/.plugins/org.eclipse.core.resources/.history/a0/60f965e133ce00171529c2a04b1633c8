@@ -1,0 +1,34 @@
+
+(bind ?a (read))
+(bind ?b (read))
+(deftemplate element
+    (slot val)
+    (slot element))
+
+(assert(element(val 2)(element  A)))
+(assert(element(val 3)(element  B)))
+(assert(element(val 7)(element  C)))
+(assert(element(val 1001)(element  D)))
+
+(deftemplate suma (slot valoare))
+(assert(suma(valoare 0)))
+   
+(bind ?x ?a)
+(bind ?y ?b)
+(defrule CalculSuma
+
+    ?elem <-(element(val ?i))
+    ?sum <-(suma(valoare ?val1))
+    (element(val ?i &:(> ?i x)&:(< ?i y)))
+    =>
+    (modify ?sum(valoare (+ ?i ?val1)))
+    (retract ?elem)
+    )
+(defrule afisaresuma
+    (suma(valoare ?val1))
+    =>
+    (printout t "suma=" ?val1 crlf)
+    )
+
+(run)
+(watch all)

@@ -1,0 +1,37 @@
+
+(deftemplate Multimi
+    (slot valElem)
+    (slot multime))
+
+(defglobal ?*a* = 0)
+(bind ?*a* (read))
+(defglobal ?*b* = 0)
+(bind ?*b* (read))
+
+(assert(Multimi(valElem 2)(multime  A)))
+(assert(Multimi(valElem 3)(multime  B)))
+(assert(Multimi(valElem 7)(multime  C)))
+(assert(Multimi(valElem 1001)(multime  D)))
+
+(deftemplate suma (slot valoare))
+(assert(suma(valoare 0)))
+
+
+(defrule Sum
+	
+    ?e <-(Multimi(valElem ?i))
+    ?s <-(suma(valoare ?x))
+    (Multimi(valElem ?i &:(> ?i ?*a*)&:(< ?i ?*b*)))
+    =>
+    (modify ?s(valoare (+ ?i ?x)))
+    (retract ?e)
+    )
+(defrule Print
+    (suma(valoare ?x))
+    =>
+    (printout t "suma=" ?x crlf)
+    )
+
+
+(run)
+(watch all)

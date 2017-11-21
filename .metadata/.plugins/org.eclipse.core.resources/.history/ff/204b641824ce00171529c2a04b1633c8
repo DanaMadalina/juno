@@ -1,0 +1,178 @@
+(deftemplate male       (slot p))
+(assert (male(p Ion)))
+(assert (male(p Vasile)))
+(assert (male(p Ionica)))
+
+(deftemplate female     (slot p))
+(assert (female(p Ionela)))
+(assert (female(p Vasilica)))
+(assert (female(p Maria)))
+
+(deftemplate father-of  (slot p1) (slot p2))
+(assert (father-of(p1 Ionica)(p2 Vasile)))
+
+(deftemplate mother-of  (slot p1) (slot p2))
+(assert (mother-of(p1 Ionica)(p2 Vasile)))
+
+(deftemplate wife-of    (slot p1) (slot p2))
+(deftemplate husband-of (slot p1) (slot p2))
+
+(deftemplate parent-of      (slot p1) (slot p2))
+(deftemplate grandfather-of (slot p1) (slot p2))
+(deftemplate grandmother-of (slot p1) (slot p2))
+(deftemplate grandparent-of (slot p1) (slot p2))
+(deftemplate sister-of      (slot p1) (slot p2))
+(deftemplate brother-of     (slot p1) (slot p2))
+(deftemplate uncle-of       (slot p1) (slot p2))
+(deftemplate aunt-of        (slot p1) (slot p2))
+(deftemplate cousin-of      (slot p1) (slot p2))
+
+(deffacts my-family-tree
+	(father-of (p1 Mehrshad) (p2 Faraz))
+	(male      (p  Faraz))
+)
+
+(reset)
+
+(defrule male
+	(or
+		(father-of (p1 ?a1) (p2 ?a2))
+		(grandfather-of (p1 ?a1) (p2 ?a2))
+		(brother-of (p1 ?a1) (p2 ?a2))
+		(uncle-of (p1 ?a1) (p2 ?a2))
+		(husband-of (p1 ?a1) (p2 ?a2))
+	)
+	=> (assert (male (p ?a1)))
+)
+
+(defrule female
+	(or
+		(mother-of (p1 ?a1) (p2 ?a2))
+		(grandmother-of (p1 ?a1) (p2 ?a2))
+		(sister-of (p1 ?a1) (p2 ?a2))
+		(aunt-of (p1 ?a1) (p2 ?a2))
+		(wife-of (p1 ?a1) (p2 ?a2))
+	)
+	=> (assert (female (p ?a1)))
+)
+
+(defrule parent-of
+	(or
+		(father-of (p1 ?a1) (p2 ?a2))
+		(mother-of (p1 ?a1) (p2 ?a2))
+	)
+	=> (assert (parent-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule grandfather-of
+	(and
+		(father-of (p1 ?a1) (p2 ?a2))
+		(parent-of (p1 ?a2) (p2 ?a3))
+	)
+	=> (assert (grandfather-of (p1 ?a1) (p2 ?a3)))
+)
+
+(defrule grandmother-of
+	(and
+		(mother-of (p1 ?a1) (p2 ?a2))
+		(parent-of (p1 ?a2) (p2 ?a3))
+	)
+	=> (assert (grandmother-of (p1 ?a1) (p2 ?a3)))
+)
+
+(defrule grandparent-of
+	(and
+		(parent-of (p1 ?a1) (p2 ?a2))
+		(parent-of (p1 ?a2) (p2 ?a3))
+	)
+	=> (assert (grandparent-of (p1 ?a1) (p2 ?a3)))
+)
+
+(defrule sister-of
+	(and
+		(female (p ?a1))
+		(parent-of (p1 ?a3) (p2 ?a1))
+		(parent-of (p1 ?a3) (p2 ?a2))
+		(test (<> ?a1 ?a2))
+	)
+	=> (assert (sister-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule brother-of
+	(and
+		(male (p ?a1))
+		(parent-of (p1 ?a3) (p2 ?a1))
+		(parent-of (p1 ?a3) (p2 ?a2))
+		(test (<> ?a1 ?a2))
+	)
+	=> (assert (brother-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule uncle-of
+	(and
+		(male (p ?a1))
+		(parent-of  (p1 ?a3) (p2 ?a2))
+		(brother-of (p1 ?a1) (p2 ?a3))
+	)
+	=> (assert (uncle-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule aunt-of
+	(and
+		(female (p ?a1))
+		(parent-of  (p1 ?a3) (p2 ?a2))
+		(sister-of (p1 ?a1) (p2 ?a3))
+	)
+	=> (assert (aunt-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule cousin-of
+	(and
+		(parent-of  (p1 ?a3) (p2 ?a1))
+		(parent-of  (p1 ?a4) (p2 ?a2))
+		(parent-of  (p1 ?a5) (p2 ?a3))
+		(parent-of  (p1 ?a5) (p2 ?a4))
+		(test (<> ?a1 ?a2))
+		(test (<> ?a3 ?a4))
+	)
+	=> (assert (cousin-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule wife-of
+	(and
+		(female (p ?a1))
+		(parent-of  (p1 ?a1) (p2 ?a3))
+		(parent-of  (p1 ?a2) (p2 ?a3))
+		(test (<> ?a1 ?a2))
+	)
+	=> (assert (wife-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule husband-of
+	(and
+		(male (p ?a1))
+		(parent-of  (p1 ?a1) (p2 ?a3))
+		(parent-of  (p1 ?a2) (p2 ?a3))
+		(test (<> ?a1 ?a2))
+	)
+	=> (assert (husband-of (p1 ?a1) (p2 ?a2)))
+)
+
+(defrule parent-mother
+	(and
+		(wife-of   (p1 ?a1) (p2 ?a2))
+		(parent-of (p1 ?a2) (p2 ?a3))
+	)
+	=> (assert (mother-of (p1 ?a1) (p2 ?a3)))
+)
+
+(defrule parent-father
+	(and
+		(husband-of (p1 ?a1) (p2 ?a2))
+		(parent-of  (p1 ?a2) (p2 ?a3))
+	)
+	=> (assert (father-of (p1 ?a1) (p2 ?a3)))
+)
+
+(run)
+(facts)

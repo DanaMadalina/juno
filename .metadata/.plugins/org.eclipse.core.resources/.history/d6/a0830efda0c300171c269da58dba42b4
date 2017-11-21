@@ -1,0 +1,8 @@
+(printout t "Hello world" crlf)
+;comentariu
+/*COMENTARIU*/
+
+(bind ?a (read));citire de la tastatura
+(bind ?b (read))
+(if(> ?a ?b) then (printout t ?a crlf)
+    else(printout t ?b crlf))
