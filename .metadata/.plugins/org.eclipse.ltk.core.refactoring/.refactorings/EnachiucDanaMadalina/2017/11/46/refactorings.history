@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename resource &apos;lab1/src/lab1.clp&apos; to &apos;EnachiucDanaMadalina.clp&apos;" description="Rename resource &apos;lab1.clp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/lab1.clp" name="EnachiucDanaMadalina.clp" stamp="1510593661769" updateReferences="true"/>
-</session>
